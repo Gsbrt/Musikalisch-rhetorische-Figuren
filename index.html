@@ -629,12 +629,16 @@ function shuffle(arr) {
 function resetDeck() {
   deck = shuffle(FIGURES);
   drawn = 0;
-  document.getElementById('deck-section').style.display = 'flex';
-  document.getElementById('card-area').style.display = 'none';
+  const ds = document.getElementById('deck-section');
+  const ca = document.getElementById('card-area');
+  ds.removeAttribute('style');
+  ca.style.cssText = 'display:none';
   document.getElementById('deck-count').textContent = deck.length + ' Karten';
   document.getElementById('progress-text').textContent = '';
   document.getElementById('progress-fill').style.width = '0%';
-  document.getElementById('btn-draw').textContent = 'Nächste Karte';
+  const btn = document.getElementById('btn-draw');
+  btn.textContent = 'Nächste Karte';
+  btn.disabled = false;
 }
 
 function drawCard() {
@@ -662,9 +666,9 @@ function drawCard() {
   void card.offsetWidth;
   card.style.animation = 'cardReveal 0.35s ease';
 
-  document.getElementById('deck-section').style.display = 'none';
+  document.getElementById('deck-section').style.cssText = 'display:none';
   const ca = document.getElementById('card-area');
-  ca.style.display = 'flex';
+  ca.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:1.5rem;';
 
   const pct = Math.round((drawn / FIGURES.length) * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
