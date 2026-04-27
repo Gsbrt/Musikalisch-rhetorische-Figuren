@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musikalisch-rhetorische Figuren</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1612;
+    --ink-2: #4a4035;
+    --ink-3: #8a7a6a;
+    --paper: #f5f0e8;
+    --paper-2: #ede5d4;
+    --paper-3: #e2d8c4;
+    --accent: #8b3a1a;
+    --accent-2: #c4622a;
+    --gold: #a07830;
+    --gold-2: #d4a855;
+    --line: rgba(26,22,18,0.15);
+    --line-strong: rgba(26,22,18,0.28);
+    --serif: 'EB Garamond', Georgia, serif;
+    --display: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+
+  /* Subtle paper texture via repeating gradient */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(26,22,18,0.03) 28px,
+      rgba(26,22,18,0.03) 29px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    width: 100%;
+    max-width: 760px;
+    padding: 3.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-rule {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 1.5rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 2rem;
+  }
+
+  .header-rule-bottom {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+    margin-bottom: 0;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    width: 100%;
+    max-width: 760px;
+    padding: 2rem 2rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* DECK AREA */
+  .deck-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .deck-wrapper {
+    position: relative;
+    width: 300px;
+    height: 190px;
+  }
+
+  .deck-shadow {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--paper-3);
+    border-radius: 4px;
+  }
+  .deck-shadow:nth-child(1) { transform: rotate(-3.5deg) translate(-5px, 6px); }
+  .deck-shadow:nth-child(2) { transform: rotate(2deg) translate(4px, 3px); }
+  .deck-shadow:nth-child(3) { transform: rotate(-1deg) translate(-2px, 1px); }
+
+  .deck-face {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    padding: 1.5rem;
+  }
+
+  .deck-face::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .deck-face:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(26,22,18,0.12); }
+
+  .deck-ornament {
+    font-family: var(--display);
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .deck-count {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .deck-hint {
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* DRAWN CARD */
+  .card-area {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 2rem 2.25rem 2rem;
+    position: relative;
+    animation: cardReveal 0.35s ease;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  @keyframes cardReveal {
+    from { opacity: 0; transform: translateY(16px) rotate(-1deg); }
+    to   { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+  }
+
+  .card-cat {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .card-num {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+
+  .card-name {
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 0.15rem;
+  }
+
+  .card-origin {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--ink-3);
+    margin-bottom: 1.2rem;
+  }
+
+  .card-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+
+  .card-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+
+  .card-example-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.4rem;
+  }
+
+  .card-example {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--ink-2);
+    font-style: italic;
+    padding-left: 1rem;
+    border-left: 2px solid var(--paper-3);
+  }
+
+  /* COLOR BAR per category */
+  .card-color-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 9px 24px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn.primary { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 480px;
+    height: 2px;
+    background: var(--line);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+    border-radius: 1px;
+  }
+
+  .progress-text {
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+
+  /* LEGEND */
+  .legend {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .legend-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .legend-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: var(--ink-2);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer a { color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 500px) {
+    header { padding: 2rem 1rem 1.5rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+    .card { padding: 1.5rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-rule"></div>
+  <p class="subtitle">Figurenlehre · Barock</p>
+  <h1>Musikalisch-rhetorische<br><em>Figuren</em></h1>
+  <p style="font-size:0.95rem; color:var(--ink-3); max-width:420px; margin:1rem auto 2rem; line-height:1.7;">
+    Rhetorische Wendungen in musikalischer Gestalt — ein Kartendeck nach der Figurenlehre des 17. und 18. Jahrhunderts.
+  </p>
+  <div class="header-rule-bottom"></div>
+</header>
+
+<main>
+
+  <!-- DECK VIEW -->
+  <section class="deck-section" id="deck-section">
+    <div class="deck-wrapper" onclick="drawCard()" title="Karte ziehen">
+      <div class="deck-shadow"></div>
+      <div class="deck-shadow"></div>
+      <div class="deck-shadow"></div>
+      <div class="deck-face">
+        <div class="deck-ornament">𝄞</div>
+        <div class="deck-count" id="deck-count">35 Karten</div>
+        <div class="deck-hint">Klicken zum Ziehen</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARD VIEW -->
+  <section class="card-area" id="card-area">
+    <div class="card" id="drawn-card">
+      <div class="card-color-bar" id="c-bar"></div>
+      <div class="card-header">
+        <span class="card-cat" id="c-cat"></span>
+        <span class="card-num" id="c-num"></span>
+      </div>
+      <div class="card-name" id="c-name"></div>
+      <div class="card-origin" id="c-origin"></div>
+      <div class="card-divider"></div>
+      <div class="card-desc" id="c-desc"></div>
+      <div class="card-example-label">Wirkung &amp; Anwendung</div>
+      <div class="card-example" id="c-example"></div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progress-text"></div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="btn-draw" onclick="drawCard()">Nächste Karte</button>
+      <button class="btn" onclick="resetDeck()">Neu mischen</button>
+    </div>
+  </section>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-title">Kategorien</div>
+    <div class="legend-grid" id="legend-grid"></div>
+  </div>
+
+</main>
+
+<footer>
+  Musikalisch-rhetorische Figurenlehre · 17./18. Jahrhundert<br>
+  Quellen: Burmeister, Bernhard, Kircher, Mattheson · <a href="https://de.wikipedia.org/wiki/Figur_(Musik)" target="_blank">Wikipedia</a>
+</footer>
+
+<script>
+const CATEGORIES = {
+  "Bewegungsfigur":    { color: "#1D9E75" },
+  "Chromatische Figur":{ color: "#534AB7" },
+  "Stillstandsfigur":  { color: "#888780" },
+  "Pausenfigur":       { color: "#185FA5" },
+  "Intervallsfigur":   { color: "#BA7517" },
+  "Wiederholungsfigur":{ color: "#993C1D" },
+  "Harmonische Figur": { color: "#D4537E" },
+  "Rhythmusfigur":     { color: "#639922" },
+  "Satztechnische Figur":{ color: "#378ADD" },
+  "Affektfigur":       { color: "#0F6E56" },
+  "Kontrastfigur":     { color: "#E24B4A" },
+  "Dissonanzfigur":    { color: "#712B13" },
+  "Kontrapunktfigur":  { color: "#26215C" },
+  "Klangfigur":        { color: "#8b3a1a" },
+};
+
+const FIGURES = [
+  /* ── Bewegungsfiguren ── */
+  { name:"Anabasis", origin:"gr. anábasis – Aufstieg", cat:"Bewegungsfigur",
+    desc:"Eine aufwärtsstrebende melodische Linie, die Erhebung, Hoffnung, Auferstehung oder himmlische Freude musikalisch verkörpert. Je steiler der Anstieg, desto intensiver der Ausdruck.",
+    example:"Bach verwendet aufwärtsstrebende Linien konsequent bei Texten wie „Auferstehung", „Himmel" oder „Freude" — die Melodie steigt, und der Inhalt steigt mit." },
+  { name:"Katabasis", origin:"gr. katábasis – Abstieg", cat:"Bewegungsfigur",
+    desc:"Eine abwärtsführende melodische Linie, die Erniedrigung, Trauer, Tod oder Höllenfahrt symbolisiert. Sie ist die Gegenfigur zur Anabasis.",
+    example:"„Hinabgestiegen in die Hölle" — bei solchen Textstellen sinkt die Melodie unausweichlich. Eine klassische Verwendung findet sich in Bachs Passionen." },
+  { name:"Circulatio", origin:"lat. circulus – Kreis", cat:"Bewegungsfigur",
+    desc:"Eine kreisförmig geführte melodische Bewegung, die nach oben und unten um einen zentralen Ton schwingt. Sie drückt Kreisläufe, Umarmung, Ewigkeit oder Herrschaft aus.",
+    example:"Bei Texten wie „Krone", „umgeben" oder „Ewigkeit" kehrt die Melodie immer zu sich selbst zurück — ein klingendes Symbol der Vollständigkeit." },
+  { name:"Tirata", origin:"it. tirare – ziehen, schießen", cat:"Bewegungsfigur",
+    desc:"Eine schnelle Folge stufenweise auf- oder absteigender Noten gleichen Notenwertes — wie ein Pfeil, der abgeschossen wird. Sie erzeugt Schwung, Energie und Entschlossenheit.",
+    example:"Schnelle Läufe in gleichen Notenwerten reißen die Musik vorwärts; sie tauchen bei Begriffen wie „Eile", „Sturm" oder schlicht zur Belebung eines Satzes auf." },
+  { name:"Gradatio", origin:"lat. – stufenweises Ansteigen", cat:"Bewegungsfigur",
+    desc:"Eine schrittweise, stufenförmige Bewegung nach oben oder unten, die ein allmähliches Wachsen oder Schwinden ausdrückt — langsamer und bedächtiger als die Klimax.",
+    example:"Der langsame Aufstieg zu einem Höhepunkt gibt dem Hörer Zeit, den Anstieg zu verfolgen — ideal für Texte über wachsende Hoffnung oder zunehmende Qual." },
+
+  /* ── Chromatische Figuren ── */
+  { name:"Passus duriusculus", origin:"lat. – der harte/schwere Gang", cat:"Chromatische Figur",
+    desc:"Eine chromatisch auf- oder absteigende Stimmführung, meist im Raum einer Quarte. Als Lamentobass ist er eines der bekanntesten musikalischen Schmerzsymbole des Barocks.",
+    example:"Purcells „When I am laid in earth" aus Dido and Aeneas hat einen unaufhörlich chromatisch sinkenden Bass — seufzende, unausweichliche Trauer." },
+  { name:"Pathopoeia", origin:"gr. páthos + poíesis – Leidenschaft erzeugen", cat:"Chromatische Figur",
+    desc:"Leiterfremde (chromatische) Töne außerhalb der Tonart erregen als textbezogene Figur Affekte wie Schmerz, Leidenschaft oder Klage. Der fremde Ton stört das harmonische Gleichgewicht bewusst.",
+    example:"Ein unerwarteter Halbtonschritt außerhalb der Tonart — der Hörer spürt sofort emotionale Erschütterung, auch ohne den Text zu verstehen." },
+  { name:"Saltus duriusculus", origin:"lat. – der harte Sprung", cat:"Chromatische Figur",
+    desc:"Ein großer, ungewöhnlicher — meist fallender — Melodiesprung wie eine verminderte Quinte oder kleine Septime. Er drückt „Falschheit", Erschütterung oder Hässlichkeit aus.",
+    example:"Ein plötzlicher Sprung in ein fremdes Intervall klingt schmerzhaft und befremdlich — perfekt für Texte über Verrat, Sünde oder Leid." },
+
+  /* ── Stillstands- und Pausenfiguren ── */
+  { name:"Aposiopesis", origin:"gr. – Verstummen", cat:"Stillstandsfigur",
+    desc:"Eine Generalpause — das vollständige Schweigen aller Stimmen zugleich. Als Affektfigur drückt sie Tod, Erschrecken, Sprachlosigkeit oder das Unaussprechliche aus.",
+    example:"Alle Stimmen brechen ab. Das Schweigen selbst spricht. Bei Texten wie „Tod", „Stille" oder „Schrecken" ist dieser Moment erschütternd wirkungsvoll." },
+  { name:"Suspiratio", origin:"lat. suspirare – seufzen", cat:"Pausenfigur",
+    desc:"Kurze Pausen (Achtel- oder Sechzehntelreste) unterbrechen die melodische Linie, sodass sie wie Seufzer oder unterdrücktes Schluchzen wirkt — der Atem stockt.",
+    example:"Eine Melodie, die immer wieder von Pausen zerrissen wird, vermittelt Qual, Erschöpfung oder Weinen. Besonders bei Klageliedern des Barocks zu finden." },
+  { name:"Dubitatio", origin:"lat. dubitare – zweifeln, zögern", cat:"Stillstandsfigur",
+    desc:"Eine zweifelhafte, schwankende Modulation oder ein harmonischer Stillstand. Die Musik hält inne, weiß nicht wohin — sie zweifelt.",
+    example:"Unerwartete harmonische Ausweichungen ohne klare Richtung spiegeln inneren Zweifel. Die Musik drückt das aus, was der Text mit dem Wort „vielleicht" meint." },
+
+  /* ── Intervallsfiguren ── */
+  { name:"Exclamatio", origin:"lat. exclamare – ausrufen", cat:"Intervallsfigur",
+    desc:"Ein aufwärts gerichteter Melodiesprung — mindestens eine Terz, oft eine Sexte oder mehr. Er drückt Klage, Empörung, Staunen oder leidenschaftlichen Ausruf aus.",
+    example:"Ein plötzlicher Sprung nach oben auf einem emotionalen Textwort gibt dem Klageruf seine musikalische Geste — der Körper öffnet sich nach oben." },
+  { name:"Interrogatio", origin:"lat. interrogare – fragen", cat:"Intervallsfigur",
+    desc:"Eine steigende melodische Wendung am Satzende, die wie eine musikalische Frage klingt — analog zur steigenden Sprachintonation bei Fragen.",
+    example:"Bei Texten wie „Wo bist du?" oder „Was soll ich tun?" steigt die Melodie am Ende an und erzeugt das Gefühl einer offenen, wartenden Frage." },
+  { name:"Abruptio", origin:"lat. abrumpere – abbrechen", cat:"Intervallsfigur",
+    desc:"Ein unvermittelter Abbruch der melodischen Linie oder des gesamten Satzes durch einen unerwarteten Sprung oder Schnitt — nicht als Pause, sondern als Riss.",
+    example:"Die Melodie bricht ab, bevor sie ihren natürlichen Abschluss findet — wie ein unterbrochener Gedanke oder ein jäher Schrecken." },
+
+  /* ── Wiederholungsfiguren ── */
+  { name:"Anaphora", origin:"gr. anaphorá – Wiederaufnahme", cat:"Wiederholungsfigur",
+    desc:"Ein melodisches Motiv oder eine Phrase wird mehrfach wiederholt — nicht streng gesetzmäßig, sondern dringend insistierend, wie in einer rhetorischen Rede.",
+    example:"Das gleiche melodische Motiv kehrt immer wieder und bohrt sich in die Aufmerksamkeit — eindringlich, bittend, fordernd." },
+  { name:"Klimax", origin:"gr. klímax – Leiter, Stufengang", cat:"Wiederholungsfigur",
+    desc:"Eine Figur wird wiederholt und dabei schrittweise auf einer höheren oder niedrigeren Tonstufe sequenziert — eine stufenweise Steigerung.",
+    example:"Die gleiche Phrase, immer höher — Spannung und Energie bauen sich unweigerlich auf bis zum Höhepunkt oder zum Überwältigtsein." },
+  { name:"Analepsis", origin:"gr. – Wiederaufnahme auf gleicher Stufe", cat:"Wiederholungsfigur",
+    desc:"Eine Figur wird mehrfach auf exakt derselben Tonhöhe wiederholt — nicht sequenziert, sondern starr, beharrlich, insistierend.",
+    example:"Die Wiederholung ohne Veränderung drückt Unerbittlichkeit aus — das Schicksal, das sich nicht bewegt, oder den Ruf, der nicht verstummt." },
+  { name:"Emphasis", origin:"gr. – Hervorhebung", cat:"Wiederholungsfigur",
+    desc:"Gruppe von Figuren, die durch Wiederholung eine Aussage bekräftigen und ihr zusätzliches Gewicht verleihen — das Sagen-Müssen, das Nochmals-Sagen.",
+    example:"Wenn ein Wort oder eine Phrase mehrfach gesungen wird, bekommt es rituelle oder beschwörende Qualität — wie ein „Amen" am Ende." },
+
+  /* ── Harmonische Figuren ── */
+  { name:"Anticipatio", origin:"lat. – Vorwegnahme", cat:"Harmonische Figur",
+    desc:"Das Vorziehen eines Tons der folgenden Harmonie — er klingt schon, bevor die Harmonie eintritt, und erzeugt so einen kurzen, weichen Vorausklang.",
+    example:"Der Ton, der eigentlich erst kommt, ist schon da — ein kleines harmonisches Vorgreifen, das Sehnsucht oder Ungeduld vermittelt." },
+  { name:"Antitheton", origin:"gr./lat. – Gegenüberstellung", cat:"Kontrastfigur",
+    desc:"Die musikalische Gegenüberstellung zweier gegensätzlicher Elemente: Dur gegen Moll, hoch gegen tief, laut gegen leise, schnell gegen langsam.",
+    example:"Bei „Leben und Tod" wechselt die Musik schlagartig von hellem Dur in dunkles Moll — der Kontrast selbst ist die rhetorische Aussage." },
+  { name:"Cadentia duriuscula", origin:"lat. – der harte Schluss", cat:"Harmonische Figur",
+    desc:"Eine Schlussformel, über deren vorletztem Basston unvorbereitete Dissonanzen eintreten — ein Schluss, der trotzdem wehtut.",
+    example:"Das Stück endet, aber nicht in Frieden — eine letzte harmonische Schärfe macht den Abschluss zu einem ernsten, fast schmerzhaften Moment." },
+
+  /* ── Rhythmusfiguren ── */
+  { name:"Syncopatio", origin:"gr. synkopé – Zusammenschlagen", cat:"Rhythmusfigur",
+    desc:"Rhythmische Verschiebung gegen die normale Taktordnung (Synkope) — betonte Töne fallen auf schwache Taktteile und erzeugen Spannung und Unruhe.",
+    example:"Das Metrum gerät aus dem Gleichgewicht — das spiegelt innere Zerrissenheit, Konflikt oder das Gegensätzliche zweier Kräfte." },
+  { name:"Mora", origin:"lat. mora – Verzögerung, Aufenthalt", cat:"Rhythmusfigur",
+    desc:"Eine Verlängerung oder Verzögerung des rhythmischen Flusses, die Innehalten, Zögern oder feierliche Schwere ausdrückt.",
+    example:"Die Musik hält inne — ein ausgehaltener Ton, ein breiterer Rhythmus — und das Zögern selbst wird zum Ausdruck von Ehrfurcht oder Angst." },
+
+  /* ── Satztechnische Figuren ── */
+  { name:"Noema", origin:"gr. nóema – Gedachtes", cat:"Satztechnische Figur",
+    desc:"Ein homophoner (akkordischer) Abschnitt, der in ein polyphones Stück eingebettet ist. Er lenkt die Aufmerksamkeit auf einen wichtigen Textteil durch plötzlichen Gleichklang.",
+    example:"Plötzlich singen alle Stimmen im gleichen Rhythmus — die Textstelle tritt hervor wie ein Lichtstrahl aus dem vielstimmigen Gewebe." },
+  { name:"Fauxbourdon", origin:"frz. – falscher Bourdon", cat:"Satztechnische Figur",
+    desc:"Aufeinanderfolgende Terz-Sext-Akkorde, die in der Figurenlehre als Zeichen für Falsches, Sündhaftes oder Unrechtes kodiert sind.",
+    example:"Die parallelen Terz-Sext-Klänge galten als regelwidrig — genau deshalb eignen sie sich für Schuld, Verführung oder moralische Zweideutigkeit." },
+  { name:"Metalepsis", origin:"gr. – Übertragung", cat:"Kontrapunktfigur",
+    desc:"Eine Fuge, in der mindestens zwei Stimmen gleichzeitig verschiedene Motive vortragen, die dann gegenseitig übernommen und variiert werden.",
+    example:"Verschiedene melodische Gedanken verflechten sich untrennbar — ein Dialog, in dem jede Stimme die andere aufgreift, antwortet, weiterspinnt." },
+  { name:"Heterolepsis", origin:"gr. – Übernahme aus einer anderen Stimme", cat:"Kontrapunktfigur",
+    desc:"Eine Folge von Tönen, die aus kontrapunktischer Sicht verschiedenen Stimmen angehören — eine Stimme springt in das Territorium einer anderen.",
+    example:"Eine melodische Linie überschreitet ihre Grenzen und nimmt Töne der Nachbarstimme auf — ein unerwartetes Verflechten zweier Welten." },
+
+  /* ── Affektfiguren ── */
+  { name:"Hypotyposis", origin:"gr. hypó + týpos – Unterform, Abbild", cat:"Affektfigur",
+    desc:"Oberbegriff bei Burmeister für jede Figur, die den Sinngehalt des Textes musikalisch abbildet — die Musik malt das Wort buchstäblich.",
+    example:"„Aufstieg" wird zu einer aufsteigenden Linie, „Wasser" zu fließenden Läufen, „Dunkel" zu tiefer Lage — Tonmalerei in ihrer reinsten Form." },
+  { name:"Mimesis", origin:"gr. mímesis – Nachahmung", cat:"Affektfigur",
+    desc:"Musikalische Nachahmung von Naturlauten, Bewegungen oder Geräuschen — Vogelgesang, Windgeräusche, fließendes Wasser.",
+    example:"Vivaldis „Vier Jahreszeiten" steckt voller Mimesis: Vogelrufe, Sturm, Hundegebell — die Musik ahmt die Welt direkt nach." },
+  { name:"Taeniola", origin:"lat. – kleines Band", cat:"Affektfigur",
+    desc:"Eine zarte, fließende melodische Linie, die Sanftheit, Zärtlichkeit oder anmutige Bewegung ausdrückt — das Gegenteil von Schärfe und Energie.",
+    example:"Bei Texten über Schlaf, Gnade oder Lieblichkeit gleitet die Melodie dahin wie ein leises Band — ohne Ecken, ohne Anstrengung." },
+
+  /* ── Dissonanzfiguren ── */
+  { name:"Extensio", origin:"lat. extendere – ausdehnen", cat:"Dissonanzfigur",
+    desc:"Verlängerung eines Dissonanzklangs über seine normale Dauer hinaus. Die Spannung wird nicht sofort aufgelöst — sie bleibt bestehen und wächst.",
+    example:"Die Dissonanz hält aus, verharrt, zögert — der Hörer wartet auf Auflösung. Dieses Hinauszögern erzeugt wachsende Beklemmung." },
+  { name:"Transitus", origin:"lat. transire – hinübergehen", cat:"Dissonanzfigur",
+    desc:"Eine Durchgangsdissonanz, die zwei Konsonanzklänge miteinander verbindet. Die Regelwidrigkeit ist bewusst eingesetzt — ein kontrollierter, flüchtiger Riss.",
+    example:"Die Dissonanz ist flüchtig und löst sich sofort auf — aber in diesem kurzen Moment entsteht Bewegung, Wärme und melodischer Fluss." },
+  { name:"Quaesitio notae", origin:"lat. – das Suchen des Tons", cat:"Dissonanzfigur",
+    desc:"Das Herantasten an einen Ton durch Halbtonschritte von unten oder oben — wie ein Suchender, der seinen Weg tastend findet.",
+    example:"Die chromatischen Annäherungsschritte klingen wie Zögern und Suchen — der Ton wird nicht direkt erreicht, sondern ertastet." },
+
+  /* ── Klangfiguren ── */
+  { name:"Fuga", origin:"lat. fuga – Flucht, Verfolgung", cat:"Klangfigur",
+    desc:"Das Nachahmen eines melodischen Motivs durch eine oder mehrere Folgestimmen in einem bestimmten zeitlichen Abstand — die Stimmen folgen sich wie in einer Verfolgungsjagd.",
+    example:"Der Kanon und die Fuge sind ihre reinsten Formen: Was eine Stimme singt, antwortet eine andere — Nachahmung als musikalisches Gespräch." },
+  { name:"Commissura", origin:"lat. – Verbindung, Naht", cat:"Klangfigur",
+    desc:"Schnelle, stufenweise auf- oder absteigende Noten, die zwei Abschnitte nahtlos miteinander verbinden — eine fließende Überleitung.",
+    example:"Zwischen zwei Phrasen erscheint ein schneller Lauf, der sie verbindet — die Naht ist sichtbar, aber elegant, wie ein gut gesetzter Übergang." },
+];
+
+let deck = [];
+let drawn = 0;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function resetDeck() {
+  deck = shuffle(FIGURES);
+  drawn = 0;
+  document.getElementById('deck-section').style.display = 'flex';
+  document.getElementById('card-area').style.display = 'none';
+  document.getElementById('deck-count').textContent = deck.length + ' Karten';
+  document.getElementById('progress-text').textContent = '';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('btn-draw').textContent = 'Nächste Karte';
+}
+
+function drawCard() {
+  if (deck.length === 0) {
+    document.getElementById('btn-draw').textContent = 'Alle Karten gezogen';
+    document.getElementById('btn-draw').disabled = true;
+    return;
+  }
+
+  const fig = deck.pop();
+  drawn++;
+
+  const catColor = (CATEGORIES[fig.cat] || {}).color || '#888';
+  document.getElementById('c-bar').style.background = catColor;
+  document.getElementById('c-cat').textContent = fig.cat;
+  document.getElementById('c-num').textContent = drawn + ' / ' + FIGURES.length;
+  document.getElementById('c-name').textContent = fig.name;
+  document.getElementById('c-origin').textContent = fig.origin;
+  document.getElementById('c-desc').textContent = fig.desc;
+  document.getElementById('c-example').textContent = fig.example;
+
+  // Animate
+  const card = document.getElementById('drawn-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardReveal 0.35s ease';
+
+  document.getElementById('deck-section').style.display = 'none';
+  const ca = document.getElementById('card-area');
+  ca.style.display = 'flex';
+
+  const pct = Math.round((drawn / FIGURES.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = drawn + ' von ' + FIGURES.length + ' Karten gezogen';
+
+  if (deck.length === 0) {
+    document.getElementById('btn-draw').textContent = 'Alle Karten gezogen';
+    document.getElementById('btn-draw').disabled = true;
+  }
+}
+
+// Build legend
+function buildLegend() {
+  const seen = {};
+  FIGURES.forEach(f => { if (!seen[f.cat]) seen[f.cat] = true; });
+  const grid = document.getElementById('legend-grid');
+  Object.keys(seen).forEach(cat => {
+    const color = (CATEGORIES[cat] || {}).color || '#888';
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${color}"></div><span>${cat}</span>`;
+    grid.appendChild(item);
+  });
+}
+
+buildLegend();
+resetDeck();
+</script>
+</body>
+</html>
