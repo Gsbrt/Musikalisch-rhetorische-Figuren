@@ -129,6 +129,7 @@
     border: 1px solid var(--line-strong);
     background: var(--paper-3);
     border-radius: 4px;
+    pointer-events: none;
   }
   .deck-shadow:nth-child(1) { transform: rotate(-3.5deg) translate(-5px, 6px); }
   .deck-shadow:nth-child(2) { transform: rotate(2deg) translate(4px, 3px); }
@@ -148,6 +149,7 @@
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
     padding: 1.5rem;
+    z-index: 10;
   }
 
   .deck-face::before {
@@ -413,11 +415,11 @@
 
   <!-- DECK VIEW -->
   <section class="deck-section" id="deck-section">
-    <div class="deck-wrapper" onclick="drawCard()" title="Karte ziehen">
+    <div class="deck-wrapper" title="Karte ziehen">
       <div class="deck-shadow"></div>
       <div class="deck-shadow"></div>
       <div class="deck-shadow"></div>
-      <div class="deck-face">
+      <div class="deck-face" onclick="drawCard()">
         <div class="deck-ornament">𝄞</div>
         <div class="deck-count" id="deck-count">35 Karten</div>
         <div class="deck-hint">Klicken zum Ziehen</div>
